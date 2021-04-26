@@ -17,21 +17,9 @@ jobs:
         with:
           java-version: '15'
           distribution: 'adopt'
-#      - name: Download Maven
-#        run: |
-#          apt-get -qq update
-#          apt-get -qq -y install unzip
-#          apt-get -qq -y install curl
-#          curl -sL https://www-eu.apache.org/dist/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.zip -o maven.zip
-#          unzip -d /usr/share maven.zip
-#          rm maven.zip
-#          ln -s /usr/share/apache-maven-3.6.3/bin/mvn /usr/bin/mvn
-#          echo "M2_HOME=/usr/share/apache-maven-3.6.3" | tee -a /etc/environment
-      - name: Cache Maven packages
-        uses: actions/cache@v2
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
       - name: Build the project and run tests
-        run: mvn --debug --batch-mode resources:resources
+        run: mvn --batch-mode resources:resources > /tmp/maven.log
+      - name: List the files in the target dir. We should have foo.txt and 中文名称.txt
+        run: |
+          files=$(ls target/classes | wc -l)
+          if [ "$files" -lt 2 ]; then exit $files; fi
