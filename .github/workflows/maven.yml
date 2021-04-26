@@ -12,14 +12,19 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+      - name: List the files in the target dir. We should have foo.txt and 中文名称.txt
+        run: |
+          ls -l src/main/resources
+          files=$(ls src/main/resources | wc -l)
+          if [ "$files" -lt 2 ]; then exit $files; fi
       - name: Set up JDK 15
         uses: actions/setup-java@v2
         with:
           java-version: '15'
           distribution: 'adopt'
-      - name: Build the project and run tests
+      - name: Copy the resources using maven
         run: mvn --batch-mode resources:resources > /tmp/maven.log
-      - name: List the files in the target dir. We should have foo.txt and 中文名称.txt
+      - name: List the files in the target dir. We should have 2 files. foo.txt and 中文名称.txt
         run: |
           files=$(ls target/classes | wc -l)
-          if [ "$files" -lt 2 ]; then exit $files; fi
+          if [ "$files" -lt 2 ]; then ls target/classes; exit $files; fi
