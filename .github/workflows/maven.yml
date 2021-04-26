@@ -26,5 +26,6 @@ jobs:
         run: mvn --batch-mode resources:resources > /tmp/maven.log
       - name: List the files in the target dir. We should have 2 files. foo.txt and 中文名称.txt
         run: |
+          ls -l target/classes
           files=$(ls target/classes | wc -l)
-          if [ "$files" -lt 2 ]; then ls target/classes; exit $files; fi
+          if [ "$files" -lt 2 ]; then exit $files; fi
